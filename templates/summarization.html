@@ -1,0 +1,72 @@
+{% extends "index.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2>Text Summarization & Translation</h2>
+
+    <h3>Summarize Text</h3>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+        <label for="text" style="color:white">Enter Text:</label>
+        <textarea class="form-control" name="text" rows="5" required minlength="50" style="color:black"
+            oninvalid="this.setCustomValidity('Please enter at least 50 characters')"
+            oninput="this.setCustomValidity('')">{{ form.text.data }}</textarea>
+    </div>
+    <div class="form-group">
+        <label for="num_words" style="color:white">Number of Words in Summary:</label>
+        <input type="number" class="form-control" name="num_words" min="30" max="100" required
+            oninvalid="this.setCustomValidity('Please enter a number between 30 and 100')"
+            oninput="this.setCustomValidity('')">
+    </div>
+    <div class="form-group">
+        <label for="language" style="color:white">Select Language:</label>
+        <select class="form-control" name="language">
+            {% for code, lang in form.language.choices %}
+                <option value="{{ code }}">{{ lang }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Summarize & Translate</button>
+</form>
+
+
+
+    <hr>
+
+    <h3>Upload PDF for Summarization</h3>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <input type="file" class="form-control-file" name="pdf_file" accept=".pdf" required style="color:white">
+        </div>
+        <button type="submit" class="btn btn-primary">Upload & Summarize</button>
+    </form>
+
+    {% if pdf_text %}
+    <h3>Extracted PDF Text:</h3>
+    <pre style="color:white">{{ pdf_text[:1000] }}{% if pdf_text|length > 1000 %}...{% endif %}</pre>  <!-- Show first 1000 characters -->
+    {% endif %}
+
+    {% if summary %}
+    <h3>Summary:</h3>
+    <ul>
+        {% for sentence in summary %}
+            <li style="color:white">{{ sentence }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if translated_text %}
+    <h3>Converted Summary:</h3>
+    <p>{{ translated_text }}</p>
+    {% endif %}
+
+    {% if audio_file %}
+    <h3>Listen to Converted Summary:</h3>
+    <audio controls>
+        <source src="{{ audio_file }}" type="audio/mpeg">
+    </audio>
+    {% endif %}
+</div>
+
+{% endblock %}
